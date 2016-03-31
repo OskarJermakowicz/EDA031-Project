@@ -1,6 +1,6 @@
 /* myclient.cc: sample client program */
-#include "connection.h"
-#include "connectionclosedexception.h"
+#include "../library/connection.h"
+#include "../library/connectionclosedexception.h"
 
 #include <iostream>
 #include <string>

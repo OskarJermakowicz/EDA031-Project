@@ -1,7 +1,7 @@
 /* myserver.cc: sample server program */
-#include "server.h"
-#include "connection.h"
-#include "connectionclosedexception.h"
+#include "../library/server.h"
+#include "../library/connection.h"
+#include "../library/connectionclosedexception.h"
 
 #include <memory>
 #include <iostream>

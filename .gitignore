@@ -43,6 +43,8 @@
 *.exe
 *.out
 *.app
+myserver
+myclient
 
 # Visual Studio project files
 *.vs
@@ -52,3 +54,9 @@
 *.sln
 *.vcxproj
 *.vcxproj.filters
+
+# Requirement files for Make
+*.d
+
+# Intellij project files
+.idea/
