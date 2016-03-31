@@ -44,4 +44,11 @@
 *.out
 *.app
 
-
+# Visual Studio project files
+*.vs
+*.VC.opendb
+*.suo
+*.sdf
+*.sln
+*.vcxproj
+*.vcxproj.filters
