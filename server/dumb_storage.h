@@ -5,7 +5,7 @@
 
 using namespace std;
 
-class dumb_storage : storage {
+class dumb_storage : public storage {
 public:
 
     vector <pair<int, string>> list_ng() const;
