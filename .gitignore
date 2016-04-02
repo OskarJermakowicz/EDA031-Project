@@ -54,6 +54,7 @@ newsserver
 *.sdf
 *.sln
 *.vcxproj
+*.vcxproj.user
 *.vcxproj.filters
 
 # Requirement files for Make
