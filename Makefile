@@ -27,7 +27,7 @@ library:
 	$(MAKE) -C $(LIB_DIR) libclientserver.a
 
 server:
-	$(MAKE) -C $(SERVER_DIR) myserver
+	$(MAKE) -C $(SERVER_DIR) newsserver
 
 client:
 	$(MAKE) -C $(CLIENT_DIR) myclient
