@@ -45,6 +45,7 @@
 *.app
 myserver
 myclient
+newsserver
 
 # Visual Studio project files
 *.vs
