@@ -7,6 +7,8 @@
 
 using namespace std;
 
+void send_byte(const shared_ptr <Connection> &conn, int byte);
+
 void send_code(const shared_ptr <Connection> &conn, int code);
 
 void send_int(const shared_ptr <Connection> &conn, int value);

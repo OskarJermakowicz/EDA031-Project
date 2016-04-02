@@ -1,16 +1,35 @@
 #include "message.h"
+#include "protocol.h"
 
 using namespace std;
 
-void send_code(const shared_ptr <Connection> &conn, int code) {
-    conn->write(code);
+void send_byte(const shared_ptr <Connection> &conn, int byte) {
+    conn->write(byte);
 }
 
-void send_int(const shared_ptr <Connection> &conn, int value) { }
+void send_code(const shared_ptr <Connection> &conn, int code) {
+    send_byte(conn, code);
+}
 
-void send_int_parameter(const shared_ptr <Connection> &conn, int param) { }
+void send_int(const shared_ptr <Connection> &conn, int value) {
+    conn->write((value >> 24) & 0xFF);
+    conn->write((value >> 16) & 0xFF);
+    conn->write((value >> 8) & 0xFF);
+    conn->write(value & 0xFF);
+}
 
-void send_string_parameter(const shared_ptr <Connection> &conn, const string &param) { }
+void send_int_parameter(const shared_ptr <Connection> &conn, int param) {
+    send_code(conn, Protocol::PAR_NUM);
+    send_int(conn, param);
+}
+
+void send_string_parameter(const shared_ptr <Connection> &conn, const string &param) {
+    send_code(conn, Protocol::PAR_STRING);
+    send_int(conn, param.length());
+    for (char c : param) {
+        conn->write(c);
+    }
+}
 
 int recv_byte(const shared_ptr <Connection> &conn) {
     return conn->read();
@@ -28,6 +47,19 @@ int recv_int(const shared_ptr <Connection> &conn) {
     return (byte1 << 24) | (byte2 << 16) | (byte3 << 8) | byte4;
 }
 
-int recv_int_parameter(const shared_ptr <Connection> &conn) { }
+int recv_int_parameter(const shared_ptr <Connection> &conn) {
+    recv_code(conn); //TODO check that it's Protocol::PAR_NUM, otherwise throw error
+    return recv_int(conn);
+}
 
-string recv_string_parameter(const shared_ptr <Connection> &conn) { }
+string recv_string_parameter(const shared_ptr <Connection> &conn) {
+    recv_code(conn); //TODO check that it's Protocol::PAR_STRING, otherwise throw error
+    int n = recv_int(conn);
+    string s;
+    char ch;
+    for (int i = 0; i != n; ++i) {
+        s += ch;
+    }
+    return s;
+
+}
