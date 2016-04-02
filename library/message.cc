@@ -1,5 +1,6 @@
 #include "message.h"
 #include "protocol.h"
+#include "protocolviolationexception.h"
 
 using namespace std;
 
@@ -31,6 +32,12 @@ void send_string_parameter(const shared_ptr <Connection> &conn, const string &pa
     }
 }
 
+void consume_code(const shared_ptr <Connection> &conn, int code) {
+    if (recv_code(conn) != code)
+        throw ProtocolViolationException();
+
+}
+
 int recv_byte(const shared_ptr <Connection> &conn) {
     return conn->read();
 }
@@ -48,12 +55,12 @@ int recv_int(const shared_ptr <Connection> &conn) {
 }
 
 int recv_int_parameter(const shared_ptr <Connection> &conn) {
-    recv_code(conn); //TODO check that it's Protocol::PAR_NUM, otherwise throw error
+    consume_code(conn, Protocol::PAR_NUM);
     return recv_int(conn);
 }
 
 string recv_string_parameter(const shared_ptr <Connection> &conn) {
-    recv_code(conn); //TODO check that it's Protocol::PAR_STRING, otherwise throw error
+    consume_code(conn, Protocol::PAR_STRING);
     int n = recv_int(conn);
     string s;
     char ch;

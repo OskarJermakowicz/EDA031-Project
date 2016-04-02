@@ -17,6 +17,8 @@ void send_int_parameter(const shared_ptr <Connection> &conn, int param);
 
 void send_string_parameter(const shared_ptr <Connection> &conn, const std::string &param);
 
+void consume_code(const shared_ptr <Connection> &conn, int code);
+
 int recv_byte(const shared_ptr <Connection> &conn);
 
 int recv_code(const shared_ptr <Connection> &conn);
