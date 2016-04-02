@@ -5,6 +5,7 @@
 #include "dumb_storage.h"
 #include "storage_exceptions.h"
 #include "newsserver.h"
+#include "../library/protocolviolationexception.h"
 
 
 #include <memory>
@@ -14,9 +15,6 @@
 #include <cstdlib>
 
 using namespace std;
-
-struct ProtocolException {
-};
 
 
 void NewsServer::handle_request(const shared_ptr <Connection> &conn) {
@@ -45,10 +43,10 @@ void NewsServer::handle_request(const shared_ptr <Connection> &conn) {
                 get_art(conn);
                 break;
             default:
-                throw ProtocolException();
+                throw ProtocolViolationException();
         }
 
-    } catch (ProtocolException &) {
+    } catch (ProtocolViolationException &) {
         deregisterConnection(conn);
         cout << "Dropped client" << endl;
 
@@ -77,34 +75,127 @@ void NewsServer::run() {
 
 
 void NewsServer::list_ng(const shared_ptr <Connection> &conn) {
-    db.list_ng();
-    cout << "List NGs" << endl;
+    consume_code(conn, Protocol::COM_END);
+
+    send_code(conn, Protocol::ANS_LIST_NG);
+
+    vector <pair<int, string >> ngs = db.list_ng();
+    send_int_parameter(conn, ngs.size());
+    for (pair<int, string> p: ngs) {
+        send_int_parameter(conn, p.first);
+        send_string_parameter(conn, p.second);
+
+    }
+
+    send_code(conn, Protocol::ANS_END);
 }
 
 void NewsServer::create_ng(const shared_ptr <Connection> &conn) {
-    cout << "Create NG" << endl;
+    string ng = recv_string_parameter(conn);
+    consume_code(conn, Protocol::COM_END);
+    send_code(conn, Protocol::ANS_CREATE_NG);
+    try {
+        db.create_ng(ng);
+        send_code(conn, Protocol::ANS_ACK);
+    } catch (NGAlreadyExistsException &) {
+        send_code(conn, Protocol::ANS_NAK);
+        send_code(conn, Protocol::ERR_NG_ALREADY_EXISTS);
+    }
+    send_code(conn, Protocol::ANS_END);
 }
 
 void NewsServer::delete_ng(const shared_ptr <Connection> &conn) {
-    cout << "Delete NG" << endl;
+    int ng = recv_int_parameter(conn);
+    consume_code(conn, Protocol::COM_END);
+    send_code(conn, Protocol::ANS_DELETE_NG);
+    try {
+        db.delete_ng(ng);
+        send_code(conn, Protocol::ANS_ACK);
+    } catch (NGDoesNotExistsException &) {
+        send_code(conn, Protocol::ANS_NAK);
+        send_code(conn, Protocol::ERR_NG_DOES_NOT_EXIST);
+    }
+    send_code(conn, Protocol::ANS_END);
 }
 
 void NewsServer::list_art(const shared_ptr <Connection> &conn) {
-    cout << "List ART" << endl;
+    int ng = recv_int_parameter(conn);
+    consume_code(conn, Protocol::COM_END);
+    send_code(conn, Protocol::ANS_LIST_ART);
+    try {
+        vector <pair<int, string >> arts = db.list_art(ng);
+        send_code(conn, Protocol::ANS_ACK);
+        send_int_parameter(conn, arts.size());
+        for (pair<int, string> p: arts) {
+            send_int_parameter(conn, p.first);
+            send_string_parameter(conn, p.second);
+
+        }
+    } catch (NGDoesNotExistsException &) {
+        send_code(conn, Protocol::ANS_NAK);
+        send_code(conn, Protocol::ERR_NG_DOES_NOT_EXIST);
+    }
+    send_code(conn, Protocol::ANS_END);
 }
 
 void NewsServer::create_art(const shared_ptr <Connection> &conn) {
-    cout << "Create ART" << endl;
+    int ng = recv_int_parameter(conn);
+    string title = recv_string_parameter(conn);
+    string author = recv_string_parameter(conn);
+    string text = recv_string_parameter(conn);
+    consume_code(conn, Protocol::COM_END);
+
+    send_code(conn, Protocol::ANS_CREATE_ART);
+    try {
+        db.create_art(ng, author, title, text);
+        send_code(conn, Protocol::ANS_ACK);
+    } catch (NGDoesNotExistsException &) {
+        send_code(conn, Protocol::ANS_NAK);
+        send_code(conn, Protocol::ERR_NG_DOES_NOT_EXIST);
+    }
+    send_code(conn, Protocol::ANS_END);
 }
 
 void NewsServer::delete_art(const shared_ptr <Connection> &conn) {
-    cout << "Delete ART" << endl;
+    int ng = recv_int_parameter(conn);
+    int art = recv_int_parameter(conn);
+    consume_code(conn, Protocol::COM_END);
+
+    send_code(conn, Protocol::ANS_DELETE_ART);
+    try {
+        db.delete_art(ng, art);
+        send_code(conn, Protocol::ANS_ACK);
+    } catch (NGDoesNotExistsException &) {
+        send_code(conn, Protocol::ANS_NAK);
+        send_code(conn, Protocol::ERR_NG_DOES_NOT_EXIST);
+    } catch (ARTDoesNotExistsException &) {
+        send_code(conn, Protocol::ANS_NAK);
+        send_code(conn, Protocol::ERR_ART_DOES_NOT_EXIST);
+    }
+    send_code(conn, Protocol::ANS_END);
 }
 
 void NewsServer::get_art(const shared_ptr <Connection> &conn) {
-    cout << "Get ART" << endl;
-}
+    int ng = recv_int_parameter(conn);
+    int art = recv_int_parameter(conn);
+    consume_code(conn, Protocol::COM_END);
 
+    send_code(conn, Protocol::ANS_GET_ART);
+    try {
+        article a = db.get_art(ng, art);
+        send_code(conn, Protocol::ANS_ACK);
+        send_string_parameter(conn, a.title);
+        send_string_parameter(conn, a.author);
+        send_string_parameter(conn, a.text);
+    } catch (NGDoesNotExistsException &) {
+        send_code(conn, Protocol::ANS_NAK);
+        send_code(conn, Protocol::ERR_NG_DOES_NOT_EXIST);
+    } catch (ARTDoesNotExistsException &) {
+        send_code(conn, Protocol::ANS_NAK);
+        send_code(conn, Protocol::ERR_ART_DOES_NOT_EXIST);
+    }
+    send_code(conn, Protocol::ANS_END);
+}
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {
