@@ -5,6 +5,6 @@ struct NGAlreadyExistsException {
 };
 struct NGDoesNotExistsException {
 };
-struct ARTAlreadyExistsException {
+struct ARTDoesNotExistsException {
 };
 #endif //EDA031_PROJECT_STORAGE_EXCEPTIONS_H
