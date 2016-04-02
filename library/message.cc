@@ -35,7 +35,6 @@ void send_string_parameter(const shared_ptr <Connection> &conn, const string &pa
 void consume_code(const shared_ptr <Connection> &conn, int code) {
     if (recv_code(conn) != code)
         throw ProtocolViolationException();
-
 }
 
 int recv_byte(const shared_ptr <Connection> &conn) {
@@ -65,6 +64,7 @@ string recv_string_parameter(const shared_ptr <Connection> &conn) {
     string s;
     char ch;
     for (int i = 0; i != n; ++i) {
+        ch = conn->read();
         s += ch;
     }
     return s;
