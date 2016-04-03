@@ -1,21 +1,13 @@
-#include "../library/connection.h"
+#include "newsserver.h"
+#include "storage_exceptions.h"
 #include "../library/connectionclosedexception.h"
 #include "../library/message.h"
 #include "../library/protocol.h"
-#include "dumb_storage.h"
-#include "storage_exceptions.h"
-#include "newsserver.h"
 #include "../library/protocolviolationexception.h"
 
-
-#include <memory>
 #include <iostream>
-#include <string>
-#include <stdexcept>
-#include <cstdlib>
 
 using namespace std;
-
 
 void NewsServer::handle_request(const shared_ptr <Connection> &conn) {
     int command = recv_code(conn);
@@ -45,17 +37,13 @@ void NewsServer::handle_request(const shared_ptr <Connection> &conn) {
             default:
                 throw ProtocolViolationException();
         }
-
     } catch (ProtocolViolationException &) {
         deregisterConnection(conn);
         cout << "Dropped client" << endl;
-
     }
-
 }
 
 void NewsServer::run() {
-
     while (true) {
         auto conn = waitForActivity();
         if (conn != nullptr) {
@@ -76,17 +64,13 @@ void NewsServer::run() {
 
 void NewsServer::list_ng(const shared_ptr <Connection> &conn) {
     consume_code(conn, Protocol::COM_END);
-
     send_code(conn, Protocol::ANS_LIST_NG);
-
     vector <pair<int, string >> ngs = db.list_ng();
     send_int_parameter(conn, ngs.size());
     for (pair<int, string> p: ngs) {
         send_int_parameter(conn, p.first);
         send_string_parameter(conn, p.second);
-
     }
-
     send_code(conn, Protocol::ANS_END);
 }
 
@@ -144,7 +128,6 @@ void NewsServer::create_art(const shared_ptr <Connection> &conn) {
     string author = recv_string_parameter(conn);
     string text = recv_string_parameter(conn);
     consume_code(conn, Protocol::COM_END);
-
     send_code(conn, Protocol::ANS_CREATE_ART);
     try {
         db.create_art(ng, author, title, text);
@@ -160,7 +143,6 @@ void NewsServer::delete_art(const shared_ptr <Connection> &conn) {
     int ng = recv_int_parameter(conn);
     int art = recv_int_parameter(conn);
     consume_code(conn, Protocol::COM_END);
-
     send_code(conn, Protocol::ANS_DELETE_ART);
     try {
         db.delete_art(ng, art);
