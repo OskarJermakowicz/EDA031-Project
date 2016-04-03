@@ -17,9 +17,11 @@ LIB_DIR=library
 SERVER_DIR=server
 CLIENT_DIR=client
 
-PROGS = library server client
 
-all: $(PROGS)
+all:
+	$(MAKE) -C $(LIB_DIR) all
+	$(MAKE) -C $(SERVER_DIR) all
+	$(MAKE) -C $(CLIENT_DIR) all
 
 .PHONY: all clean server client library
 
