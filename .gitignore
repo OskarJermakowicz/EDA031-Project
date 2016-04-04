@@ -62,3 +62,8 @@ newsserver
 
 # Intellij project files
 .idea/
+
+# Latex files
+*.aux
+*.log
+*.pdf
