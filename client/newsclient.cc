@@ -1,30 +1,76 @@
 #include "../library/connection.h"
 #include "../library/connectionclosedexception.h"
+#include "../library/message.h"
 
 #include <iostream>
 #include <string>
 #include <stdexcept>
 #include <cstdlib>
+#include <regex>
 
 using namespace std;
 
-// Could maybe be in a seperate txt file
-const string help_text = " ";
+const string help_text = "Available commands: (parameters within <> are optional and parameters within '' are mandatory)\nlist <number>\t\tLists newsgroups, or articles of newsgroup with id number\ncreate 'name'\t\tCreates a newsgroup with name\ncreate ''\ndelete\nget";
 
-/*
- * Send an integer to the server as four bytes.
- */
-void writeNumber(const Connection& conn, int value) {
-	conn.write((value >> 24) & 0xFF);
-	conn.write((value >> 16) & 0xFF);
-	conn.write((value >> 8)	 & 0xFF);
-	conn.write(value & 0xFF);
+bool is_number(const string& s) {
+	return !s.empty() && find_if(s.begin(),
+		s.end(), [](char c) { return !isdigit(c); }) == s.end();
 }
 
-/*
- * Read a string from the server.
- */
-string readString(const Connection& conn) {
+void send_command(const Connection& conn, const string& line) {
+	cmatch m;
+	regex_match(line, m, regex("^(?:\s+)?(?:(list)(?:(?:\s+)(0|[1-9][0-9]*))?|(create)(?:\s+)(?:(?:([^\s"] + ) | "([^"] * )")|(0|[1-9][0-9]*)(?:\s+)(?:([^\s"] + ) | "([^"] * )")(?:\s+)(?:([^\s"] + ) | "([^"] * )")(?:\s+)(?:([^\s"] + ) | "([^"] * )"))|(delete)(?:\s+)(0|[1-9][0-9]*)(?:(?:\s+)(0|[1-9][0-9]*))?|(get)(?:\s+)(0|[1-9][0-9]*)(?:\s+)(0|[1-9][0-9]*)|(help))(?:\s+)?$"));
+
+	if (m.size() == 0) {
+		cout << "Unrecognized command, please try again." << endl;
+		return;
+	}
+
+	switch(m[0]) {
+	case "help":
+		cout << help_text << endl;
+		break;
+	case "list":
+		if (m.size() > 1) {
+			Message::send_int(conn, Protocol::COM_LIST_ART);
+		}
+		else {
+			Message::send_int(conn, Protocol::COM_LIST_NG);
+		}
+		break;
+	case "create":
+		if (m.size() > 2) {
+			Message::send_int(conn, Protocol::COM_CREATE_ART);
+		}
+		else {
+			Message::send_int(conn, Protocol::COM_CREATE_NG);
+		}
+		break;
+	case "delete":
+		if (m.size() > 2) {
+			Message::send_int(conn, Protocol::COM_DELETE_ART);
+		}
+		else {
+			Message::send_int(conn, Protocol::COM_DELETE_NG);
+		}
+		break
+	case "get":
+		Message::send_int(conn, Protocol::COM_GET_ART);
+		break;
+	}
+	for (unsigned int i = 1; i < m.size(); ++i) {
+		if (is_number(m[i])) {
+			Message::send_int_parameter(conn, m[i]);
+		}
+		else {
+			Message::send_string_parameter(conn, m[i]);
+		}
+	}
+	break;
+	}
+}
+
+string read_string(const Connection& conn) {
 	string s;
 	char ch;
 	while ((ch = conn.read()) != '$') {
@@ -59,8 +105,8 @@ int main(int argc, char* argv[]) {
 	string line;
 	while (getline(cin, line)) {
 		try {
-			// regex the input to see if it's a valid cmd, send corresponding nbr in protocol.h to server, print output
-			// if input help, print help_text
+			send_command(conn, line);
+			cout << read_string(conn) << endl;
 		}
 		catch (ConnectionClosedException&) {
 			cout << "No reply from server. Exiting." << endl;
