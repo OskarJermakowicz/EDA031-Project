@@ -130,7 +130,7 @@ void NewsServer::create_art(const shared_ptr <Connection> &conn) {
     consume_code(conn, Protocol::COM_END);
     send_code(conn, Protocol::ANS_CREATE_ART);
     try {
-        db.create_art(ng, author, title, text);
+        db.create_art(ng, title, author, text);
         send_code(conn, Protocol::ANS_ACK);
     } catch (NGDoesNotExistsException &) {
         send_code(conn, Protocol::ANS_NAK);
