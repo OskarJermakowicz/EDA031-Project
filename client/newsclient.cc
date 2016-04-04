@@ -71,43 +71,20 @@ void NewsClient::handle_command(string line) {
     vector <string> tokens = parse_line(line);
     if (tokens.empty()) {
         cout << "Unrecognized command, please try again." << endl;
-        return;
-    }
-    if (tokens[0] == "help") {
+    } else if (tokens[0] == "help") {
         cout << help_text << endl;
-        return;
-    }
-    else if (tokens[0] == "list") {
-        if (tokens.size() > 1) {
-            send_int(conn, Protocol::COM_LIST_ART);
-        } else {
-            send_code(conn, Protocol::COM_LIST_NG);
-        }
+    } else if (tokens[0] == "list") {
+        if (tokens.size() == 1) list_ng();
+        if (tokens.size() == 2) list_art(stoi(tokens[1]));
     } else if (tokens[0] == "create") {
-        if (tokens.size() > 2) {
-            send_int(conn, Protocol::COM_CREATE_ART);
-        } else {
-            send_int(conn, Protocol::COM_CREATE_NG);
-        }
+        if (tokens.size() == 2) create_ng(tokens[1]);
+        if (tokens.size() == 5) create_art(stoi(tokens[1]), tokens[2], tokens[3], tokens[4]);
     } else if (tokens[0] == "delete") {
-        if (tokens.size() > 2) {
-            send_int(conn, Protocol::COM_DELETE_ART);
-        } else {
-            send_int(conn, Protocol::COM_DELETE_NG);
-        }
+        if (tokens.size() == 2) delete_ng(stoi(tokens[1]));
+        if (tokens.size() == 3) delete_art(stoi(tokens[1]), stoi(tokens[2]));
     } else if (tokens[0] == "get") {
-        send_int(conn, Protocol::COM_GET_ART);
+        get_art(stoi(tokens[1]), stoi(tokens[2]));
     }
-
-    for (unsigned int i = 1; i < tokens.size(); ++i) {
-        if (is_number(tokens[i])) {
-            send_int_parameter(conn, stoi(tokens[i]));
-        }
-        else {
-            send_string_parameter(conn, tokens[i]);
-        }
-    }
-    send_code(conn, Protocol::COM_END);
 }
 
 void NewsClient::list_ng() {
@@ -115,14 +92,41 @@ void NewsClient::list_ng() {
     send_code(conn, Protocol::COM_END);
 }
 
-void NewsClient::create_ng(std::string ng) { }
+void NewsClient::create_ng(std::string ng) {
+    send_code(conn, Protocol::COM_CREATE_NG);
+    send_string_parameter(conn, ng);
+    send_code(conn, Protocol::COM_END);
+}
 
-void NewsClient::delete_ng(int ng) { }
+void NewsClient::delete_ng(int ng) {
+    send_code(conn, Protocol::COM_DELETE_NG);
+    send_int_parameter(conn, ng);
+    send_code(conn, Protocol::COM_END);
+}
 
-void NewsClient::list_art(int ng) { }
+void NewsClient::list_art(int ng) {
+    send_code(conn, Protocol::COM_LIST_ART);
+    send_int_parameter(conn, ng);
+    send_code(conn, Protocol::COM_END);
+}
 
-void NewsClient::create_art(int ng, std::string title, std::string author, std::string text) { }
+void NewsClient::create_art(int ng, std::string title, std::string author, std::string text) {
+    send_code(conn, Protocol::COM_CREATE_ART);
+    send_int_parameter(conn, ng);
+    send_string_parameter(conn, title);
+    send_string_parameter(conn, author);
+    send_string_parameter(conn, text);
+    send_code(conn, Protocol::COM_END);
+}
 
-void NewsClient::delete_art(int ng, int art) { }
+void NewsClient::delete_art(int ng, int art) {
+    send_code(conn, Protocol::COM_DELETE_ART);
+    send_int_parameter(conn, ng);
+    send_int_parameter(conn, art);
+    send_code(conn, Protocol::COM_END);
+}
 
-void NewsClient::get_art(int ng, int art) { }
+void NewsClient::get_art(int ng, int art) {
+    send_code(conn, Protocol::COM_GET_ART);
+    send_code(conn, Protocol::COM_END);
+}
