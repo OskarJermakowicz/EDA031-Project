@@ -12,10 +12,7 @@ using namespace std;
 class inmem_storage : public storage {
 public:
 
-	inmem_storage() {
-		ng_id = 0;
-	}
-
+	inmem_storage() {}
 
     void create_ng(const string &ng);
 
@@ -34,7 +31,6 @@ private:
 	int ng_id;
 	map<int, Newsgroup> ng_map;
 	set<string> ng_names;
-	//vector<pair<int, string>> ng_names;
 };
 
 #endif //EDA031_PROJECT_INMEM_STORAGE_H
