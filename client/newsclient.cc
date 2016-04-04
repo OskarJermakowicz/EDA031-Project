@@ -1,6 +1,7 @@
 #include "../library/connection.h"
 #include "../library/connectionclosedexception.h"
 #include "../library/message.h"
+#include "../library/protocol.h"
 
 #include <iostream>
 #include <string>
@@ -19,7 +20,7 @@ bool is_number(const string& s) {
 
 void send_command(const Connection& conn, const string& line) {
 	cmatch m;
-	regex_match(line, m, regex("^(?:\s+)?(?:(list)(?:(?:\s+)(0|[1-9][0-9]*))?|(create)(?:\s+)(?:(?:([^\s"] + ) | "([^"] * )")|(0|[1-9][0-9]*)(?:\s+)(?:([^\s"] + ) | "([^"] * )")(?:\s+)(?:([^\s"] + ) | "([^"] * )")(?:\s+)(?:([^\s"] + ) | "([^"] * )"))|(delete)(?:\s+)(0|[1-9][0-9]*)(?:(?:\s+)(0|[1-9][0-9]*))?|(get)(?:\s+)(0|[1-9][0-9]*)(?:\s+)(0|[1-9][0-9]*)|(help))(?:\s+)?$"));
+	regex_match(line, m, regex("^(?:[:s:]+)?(?:(list)(?:(?:[:s:]+)(0|[1-9][0-9]*))?|(create)(?:[:s:]+)(?:(?:([^[:s:]"] + ) | "([^"] * )")|(0|[1-9][0-9]*)(?:[:s:]+)(?:([^[:s:]"] + ) | "([^"] * )")(?:[:s:]+)(?:([^[:s:]"] + ) | "([^"] * )")(?:[:s:]+)(?:([^[:s:]"] + ) | "([^"] * )"))|(delete)(?:[:s:]+)(0|[1-9][0-9]*)(?:(?:[:s:]+)(0|[1-9][0-9]*))?|(get)(?:[:s:]+)(0|[1-9][0-9]*)(?:[:s:]+)(0|[1-9][0-9]*)|(help))(?:[:s:]+)?$"));
 
 	if (m.size() == 0) {
 		cout << "Unrecognized command, please try again." << endl;
@@ -32,38 +33,38 @@ void send_command(const Connection& conn, const string& line) {
 		break;
 	case "list":
 		if (m.size() > 1) {
-			Message::send_int(conn, Protocol::COM_LIST_ART);
+			send_int(conn, Protocol::COM_LIST_ART);
 		}
 		else {
-			Message::send_int(conn, Protocol::COM_LIST_NG);
+			send_int(conn, Protocol::COM_LIST_NG);
 		}
 		break;
 	case "create":
 		if (m.size() > 2) {
-			Message::send_int(conn, Protocol::COM_CREATE_ART);
+			send_int(conn, Protocol::COM_CREATE_ART);
 		}
 		else {
-			Message::send_int(conn, Protocol::COM_CREATE_NG);
+			send_int(conn, Protocol::COM_CREATE_NG);
 		}
 		break;
 	case "delete":
 		if (m.size() > 2) {
-			Message::send_int(conn, Protocol::COM_DELETE_ART);
+			send_int(conn, Protocol::COM_DELETE_ART);
 		}
 		else {
-			Message::send_int(conn, Protocol::COM_DELETE_NG);
+			send_int(conn, Protocol::COM_DELETE_NG);
 		}
 		break
 	case "get":
-		Message::send_int(conn, Protocol::COM_GET_ART);
+		send_int(conn, Protocol::COM_GET_ART);
 		break;
 	}
 	for (unsigned int i = 1; i < m.size(); ++i) {
 		if (is_number(m[i])) {
-			Message::send_int_parameter(conn, m[i]);
+			send_int_parameter(conn, m[i]);
 		}
 		else {
-			Message::send_string_parameter(conn, m[i]);
+			send_string_parameter(conn, m[i]);
 		}
 	}
 	break;
