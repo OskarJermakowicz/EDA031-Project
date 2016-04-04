@@ -90,6 +90,14 @@ void NewsClient::handle_command(string line) {
 void NewsClient::list_ng() {
     send_code(conn, Protocol::COM_LIST_NG);
     send_code(conn, Protocol::COM_END);
+    consume_code(conn, Protocol::ANS_LIST_NG);
+    int n = recv_int_parameter(conn);
+    cout << "ID:\tName:" << endl;
+    for (int i = 0; i != n; ++i) {
+        cout << recv_int_parameter(conn) << "\t" << recv_string_parameter(conn) << endl;
+    }
+    cout << "Results: \t" << n << endl;
+    consume_code(conn, Protocol::ANS_END);
 }
 
 void NewsClient::create_ng(std::string ng) {
@@ -128,5 +136,7 @@ void NewsClient::delete_art(int ng, int art) {
 
 void NewsClient::get_art(int ng, int art) {
     send_code(conn, Protocol::COM_GET_ART);
+    send_int_parameter(conn, ng);
+    send_int_parameter(conn, art);
     send_code(conn, Protocol::COM_END);
 }
