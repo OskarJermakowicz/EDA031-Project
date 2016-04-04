@@ -5,7 +5,7 @@
 using namespace std;
 
 void inmem_storage::create_ng(const string &ng) { 
-	//bool is true if insert successful
+	//bool is true if insert successful, false if ng exists.
 	pair<set<string>::iterator, bool> p = ng_names.insert(ng);
 	if (p.second) {
 		ng_map.insert(make_pair(++ng_id, Newsgroup(ng)));
@@ -17,12 +17,11 @@ void inmem_storage::create_ng(const string &ng) {
 void inmem_storage::delete_ng(int ng) { 
 	map<int, Newsgroup>::iterator it = ng_map.find(ng);
 
-	if (it != ng_map.end()) {
-		ng_names.erase(it->second.get_name());
-		ng_map.erase(it);
-	} else {
+	if (it == ng_map.end()) {
 		throw NGDoesNotExistsException();
 	}
+	ng_names.erase(it->second.get_name());
+	ng_map.erase(it);
 }
 
 vector <pair<int, string>> inmem_storage::list_ng() const {
@@ -68,4 +67,3 @@ article inmem_storage::get_art(int ng, int art) const {
 	} 
 	return it->second.get_art(art);
 }
-
