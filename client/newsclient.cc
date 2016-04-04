@@ -18,8 +18,7 @@ bool is_number(const string& s) {
 		s.end(), [](char c) { return !isdigit(c); }) == s.end();
 }
 
-void send_command(const Connection& conn, const string& line) {
-
+void send_command(const shared_ptr <Connection> &conn, const string &line) {
     string INTEGER = "(0|[1-9][0-9]*)";
     string TEXT = "(?:([^\\s\"]+)|\"([^\"]*)\")";
     string WHITESPACE = "(?:\\s+)";
@@ -43,54 +42,51 @@ void send_command(const Connection& conn, const string& line) {
 		return;
 	}
 
-	switch(m[0]) {
-	case "help":
+	if (m[0] == "help") {
 		cout << help_text << endl;
-		break;
-	case "list":
+	}
+	else if (m[0] == "list") {
 		if (m.size() > 1) {
 			send_int(conn, Protocol::COM_LIST_ART);
 		}
 		else {
 			send_int(conn, Protocol::COM_LIST_NG);
 		}
-		break;
-	case "create":
+	}
+	else if (m[0] == "create") {
 		if (m.size() > 2) {
 			send_int(conn, Protocol::COM_CREATE_ART);
 		}
 		else {
 			send_int(conn, Protocol::COM_CREATE_NG);
 		}
-		break;
-	case "delete":
+	}
+	else if (m[0] == "delete") {
 		if (m.size() > 2) {
 			send_int(conn, Protocol::COM_DELETE_ART);
 		}
 		else {
 			send_int(conn, Protocol::COM_DELETE_NG);
 		}
-		break
-	case "get":
-		send_int(conn, Protocol::COM_GET_ART);
-		break;
 	}
+	else if (m[0] == "get") {
+		send_int(conn, Protocol::COM_GET_ART);
+	}
+
 	for (unsigned int i = 1; i < m.size(); ++i) {
 		if (is_number(m[i])) {
-			send_int_parameter(conn, m[i]);
+			send_int_parameter(conn, stoi(m[i]));
 		}
 		else {
 			send_string_parameter(conn, m[i]);
 		}
 	}
-	break;
-	}
 }
 
-string read_string(const Connection& conn) {
+string read_string(const shared_ptr <Connection> &conn) {
 	string s;
 	char ch;
-	while ((ch = conn.read()) != '$') {
+	while ((ch = conn->read()) != '$') {
 		s += ch;
 	}
 	return s;
@@ -110,8 +106,8 @@ int main(int argc, char* argv[]) {
 		exit(1);
 	}
 
-	Connection conn(argv[1], port);
-	if (!conn.isConnected()) {
+	shared_ptr<Connection> conn(argv[1], port);
+	if (!conn->isConnected()) {
 		cerr << "Connection attempt failed" << endl;
 		exit(1);
 	}
