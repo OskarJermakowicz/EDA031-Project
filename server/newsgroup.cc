@@ -1,6 +1,5 @@
 #include "newsgroup.h"
 #include "storage_exceptions.h"
-#include <iostream>
 
 using namespace std;
 
@@ -18,7 +17,6 @@ void Newsgroup::create_art(const string &title, const string &author, const stri
 
 void Newsgroup::delete_art(const int &art) {
 	map<int, article>::iterator it = art_map.find(art);
-	cout << "In delete" << art << endl;
 	if (it == art_map.end()) {
 		throw ARTDoesNotExistsException();
 	}	
@@ -27,7 +25,6 @@ void Newsgroup::delete_art(const int &art) {
 
 article Newsgroup::get_art(const int &art) const {
 	map<int, article>::const_iterator it = art_map.find(art);
-	cout << "In get" << art << endl;
 	if (it == art_map.end()) {
 		throw ARTDoesNotExistsException();
 	} 
