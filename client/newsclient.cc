@@ -90,6 +90,7 @@ void NewsClient::handle_command(string line) {
 void NewsClient::list_ng() {
     send_code(conn, Protocol::COM_LIST_NG);
     send_code(conn, Protocol::COM_END);
+
     consume_code(conn, Protocol::ANS_LIST_NG);
     int n = recv_int_parameter(conn);
     cout << "ID:\tName:" << endl;
@@ -105,18 +106,48 @@ void NewsClient::create_ng(std::string ng) {
     send_code(conn, Protocol::COM_CREATE_NG);
     send_string_parameter(conn, ng);
     send_code(conn, Protocol::COM_END);
+
+    consume_code(conn, Protocol::ANS_CREATE_NG);
+    if (recv_code(conn) == Protocol::ANS_ACK) {
+        cout << "Success!" << endl;
+    } else {
+        cout << "Failed, newsgroup does not exists!" << endl;
+    }
+    consume_code(conn, Protocol::ANS_END);
 }
 
 void NewsClient::delete_ng(int ng) {
     send_code(conn, Protocol::COM_DELETE_NG);
     send_int_parameter(conn, ng);
     send_code(conn, Protocol::COM_END);
+
+    consume_code(conn, Protocol::ANS_DELETE_NG);
+    if (recv_code(conn) == Protocol::ANS_ACK) {
+        cout << "Success!" << endl;
+    } else {
+        cout << "Failed, newsgroup does not exists!" << endl;
+    }
+    consume_code(conn, Protocol::ANS_END);
 }
 
 void NewsClient::list_art(int ng) {
     send_code(conn, Protocol::COM_LIST_ART);
     send_int_parameter(conn, ng);
     send_code(conn, Protocol::COM_END);
+
+    consume_code(conn, Protocol::ANS_LIST_ART);
+    if (recv_code(conn) == Protocol::ANS_ACK) {
+        int n = recv_int_parameter(conn);
+        cout << "ID:\tTitle:" << endl;
+        for (int i = 0; i != n; ++i) {
+            cout << recv_int_parameter(conn) << "\t";
+            cout << recv_string_parameter(conn) << endl;
+        }
+        cout << "Results: " << n << endl;
+    } else {
+        cout << "Failed, newsgroup does not exists!" << endl;
+    }
+    consume_code(conn, Protocol::ANS_END);
 }
 
 void NewsClient::create_art(int ng, std::string title, std::string author, std::string text) {
@@ -126,6 +157,15 @@ void NewsClient::create_art(int ng, std::string title, std::string author, std::
     send_string_parameter(conn, author);
     send_string_parameter(conn, text);
     send_code(conn, Protocol::COM_END);
+
+    consume_code(conn, Protocol::ANS_CREATE_ART);
+    if (recv_code(conn) == Protocol::ANS_ACK) {
+        cout << "Success!" << endl;
+    } else {
+        cout << "Failed, newsgroup does not exists!" << endl;
+    }
+    consume_code(conn, Protocol::ANS_END);
+
 }
 
 void NewsClient::delete_art(int ng, int art) {
@@ -133,6 +173,17 @@ void NewsClient::delete_art(int ng, int art) {
     send_int_parameter(conn, ng);
     send_int_parameter(conn, art);
     send_code(conn, Protocol::COM_END);
+
+    consume_code(conn, Protocol::ANS_DELETE_ART);
+    int code = recv_code(conn);
+    if (code == Protocol::ANS_ACK) {
+        cout << "Success!" << endl;
+    } else if (code == Protocol::ERR_NG_ALREADY_EXISTS) {
+        cout << "Failed, newsgroup does not exists!" << endl;
+    } else {
+        cout << "Failed, article does not exists!" << endl;
+    }
+    consume_code(conn, Protocol::ANS_END);
 }
 
 void NewsClient::get_art(int ng, int art) {
@@ -140,4 +191,17 @@ void NewsClient::get_art(int ng, int art) {
     send_int_parameter(conn, ng);
     send_int_parameter(conn, art);
     send_code(conn, Protocol::COM_END);
+
+    consume_code(conn, Protocol::ANS_GET_ART);
+    int code = recv_code(conn);
+    if (code == Protocol::ANS_ACK) {
+        cout << "Title:\t" << recv_string_parameter(conn) << endl;
+        cout << "Author:\t" << recv_string_parameter(conn) << endl;
+        cout << recv_string_parameter(conn) << endl;
+    } else if (code == Protocol::ERR_NG_ALREADY_EXISTS) {
+        cout << "Failed, newsgroup does not exists!" << endl;
+    } else {
+        cout << "Failed, article does not exists!" << endl;
+    }
+    consume_code(conn, Protocol::ANS_END);
 }
