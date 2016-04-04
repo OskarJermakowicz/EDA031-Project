@@ -7,9 +7,10 @@
 using namespace std;
 
 struct article {
+	string title;
     string author;
-    string title;
     string text;
+    article(const string &t, const string &a, const string &txt) : title(t), author(a), text(txt) {}
 };
 
 
