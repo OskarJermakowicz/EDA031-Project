@@ -2,7 +2,7 @@
 #define EDA031_PROJECT_NEWSSERVER_H
 
 #include "../library/server.h"
-#include "dumb_storage.h"
+#include "inmem_storage.h"
 
 class NewsServer : public Server {
 
@@ -13,7 +13,7 @@ public:
 
 private:
 
-    dumb_storage db;
+    inmem_storage db;
 
     void handle_request(const shared_ptr <Connection> &conn);
 
