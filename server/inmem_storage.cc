@@ -5,7 +5,7 @@
 using namespace std;
 
 void inmem_storage::create_ng(const string &ng) { 
-	//bool is true if insert successful
+	//bool is true if insert successful, false if ng exists.
 	pair<set<string>::iterator, bool> p = ng_names.insert(ng);
 	if (p.second) {
 		ng_map.insert(make_pair(++ng_id, Newsgroup(ng)));
