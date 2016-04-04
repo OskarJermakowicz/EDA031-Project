@@ -1,7 +1,7 @@
 #include "../library/connectionclosedexception.h"
 #include "../library/message.h"
 #include "../library/protocol.h"
-#include "newclient.h"
+#include "newsclient.h"
 
 #include <iostream>
 
