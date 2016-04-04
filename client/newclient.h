@@ -32,6 +32,8 @@ private:
 
     std::shared_ptr <Connection> conn;
 
+    std::vector <std::string> parse_line(std::string line);
+
     void handle_command(std::string line);
 
     void list_ng();

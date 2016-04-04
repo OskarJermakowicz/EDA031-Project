@@ -52,48 +52,59 @@ void NewsClient::run() {
     }
 }
 
-
-void NewsClient::handle_command(string line) {
+vector <string> NewsClient::parse_line(string line) {
     smatch m;
     regex_match(line, m, regex(LINE, regex::icase | regex::ECMAScript));
-    if (m.size() == 0) {
+    vector <string> tokens;
+    if (!m.empty()) {
+        for (unsigned int i = 1; i < m.size(); ++i) {
+            if (m[i].length()) {
+                tokens.push_back(m[i]);
+            }
+        }
+        transform(tokens[0].begin(), tokens[0].end(), tokens[0].begin(), ::tolower);
+    }
+    return tokens;
+}
+
+void NewsClient::handle_command(string line) {
+    vector <string> tokens = parse_line(line);
+    if (tokens.empty()) {
         cout << "Unrecognized command, please try again." << endl;
         return;
     }
-    string command = m[0];
-    transform(command.begin(), command.end(), command.begin(), ::tolower);
-    if (command == "help") {
+    if (tokens[0] == "help") {
         cout << help_text << endl;
         return;
     }
-    else if (command == "list") {
-        if (m.size() > 1) {
+    else if (tokens[0] == "list") {
+        if (tokens.size() > 1) {
             send_int(conn, Protocol::COM_LIST_ART);
         } else {
             send_code(conn, Protocol::COM_LIST_NG);
         }
-    } else if (command == "create") {
-        if (m.size() > 2) {
+    } else if (tokens[0] == "create") {
+        if (tokens.size() > 2) {
             send_int(conn, Protocol::COM_CREATE_ART);
         } else {
             send_int(conn, Protocol::COM_CREATE_NG);
         }
-    } else if (command == "delete") {
-        if (m.size() > 2) {
+    } else if (tokens[0] == "delete") {
+        if (tokens.size() > 2) {
             send_int(conn, Protocol::COM_DELETE_ART);
         } else {
             send_int(conn, Protocol::COM_DELETE_NG);
         }
-    } else if (command == "get") {
+    } else if (tokens[0] == "get") {
         send_int(conn, Protocol::COM_GET_ART);
     }
 
-    for (unsigned int i = 1; i < m.size(); ++i) {
-        if (is_number(m[i])) {
-            send_int_parameter(conn, stoi(m[i]));
+    for (unsigned int i = 1; i < tokens.size(); ++i) {
+        if (is_number(tokens[i])) {
+            send_int_parameter(conn, stoi(tokens[i]));
         }
         else {
-            send_string_parameter(conn, m[i]);
+            send_string_parameter(conn, tokens[i]);
         }
     }
     send_code(conn, Protocol::COM_END);
