@@ -35,7 +35,7 @@ void send_command(const Connection& conn, const string& line) {
             "^" + WHITESPACE + "?(?:" + LIST + "|" + CREATE + "|" + DELETE + "|" + GET + "|" + HELP + ")" + WHITESPACE +
             "?$";
 
-	cmatch m;
+	smatch m;
 	regex_match(line, m, regex(LINE));
 
 	if (m.size() == 0) {
