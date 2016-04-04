@@ -18,7 +18,8 @@ bool is_number(const string& s) {
 		s.end(), [](char c) { return !isdigit(c); }) == s.end();
 }
 
-void send_command(const shared_ptr <Connection> &conn, const string &line) {
+void send_command(const shared_ptr <Connection> &conn, string line) {
+
     string INTEGER = "(0|[1-9][0-9]*)";
     string TEXT = "(?:([^\\s\"]+)|\"([^\"]*)\")";
     string WHITESPACE = "(?:\\s+)";
@@ -35,17 +36,21 @@ void send_command(const shared_ptr <Connection> &conn, const string &line) {
             "?$";
 
 	smatch m;
-	regex_match(line, m, regex(LINE));
+	regex_match(line, m, regex(LINE, regex::icase));
 
 	if (m.size() == 0) {
 		cout << "Unrecognized command, please try again." << endl;
 		return;
 	}
 
-	if (m[0] == "help") {
+	string command = m[0];
+	transform(command.begin(), command.end(), command.begin(), ::tolower);
+	cout << command << endl;
+
+	if (command == "help") {
 		cout << help_text << endl;
 	}
-	else if (m[0] == "list") {
+	else if (command == "list") {
 		if (m.size() > 1) {
 			send_int(conn, Protocol::COM_LIST_ART);
 		}
@@ -53,7 +58,7 @@ void send_command(const shared_ptr <Connection> &conn, const string &line) {
 			send_int(conn, Protocol::COM_LIST_NG);
 		}
 	}
-	else if (m[0] == "create") {
+	else if (command == "create") {
 		if (m.size() > 2) {
 			send_int(conn, Protocol::COM_CREATE_ART);
 		}
@@ -61,7 +66,7 @@ void send_command(const shared_ptr <Connection> &conn, const string &line) {
 			send_int(conn, Protocol::COM_CREATE_NG);
 		}
 	}
-	else if (m[0] == "delete") {
+	else if (command == "delete") {
 		if (m.size() > 2) {
 			send_int(conn, Protocol::COM_DELETE_ART);
 		}
@@ -69,7 +74,7 @@ void send_command(const shared_ptr <Connection> &conn, const string &line) {
 			send_int(conn, Protocol::COM_DELETE_NG);
 		}
 	}
-	else if (m[0] == "get") {
+	else if (command == "get") {
 		send_int(conn, Protocol::COM_GET_ART);
 	}
 
@@ -83,14 +88,6 @@ void send_command(const shared_ptr <Connection> &conn, const string &line) {
 	}
 }
 
-string read_string(const shared_ptr <Connection> &conn) {
-	string s;
-	char ch;
-	while ((ch = conn->read()) != '$') {
-		s += ch;
-	}
-	return s;
-}
 
 int main(int argc, char* argv[]) {
 	if (argc != 3) {
@@ -119,7 +116,6 @@ int main(int argc, char* argv[]) {
 	while (getline(cin, line)) {
 		try {
 			send_command(conn, line);
-			cout << read_string(conn) << endl;
 		}
 		catch (ConnectionClosedException&) {
 			cout << "No reply from server. Exiting." << endl;
