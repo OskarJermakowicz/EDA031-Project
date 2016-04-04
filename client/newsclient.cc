@@ -94,9 +94,10 @@ void NewsClient::list_ng() {
     int n = recv_int_parameter(conn);
     cout << "ID:\tName:" << endl;
     for (int i = 0; i != n; ++i) {
-        cout << recv_int_parameter(conn) << "\t" << recv_string_parameter(conn) << endl;
+        cout << recv_int_parameter(conn) << "\t";
+        cout << recv_string_parameter(conn) << endl;
     }
-    cout << "Results: \t" << n << endl;
+    cout << "Results: " << n << endl;
     consume_code(conn, Protocol::ANS_END);
 }
 
