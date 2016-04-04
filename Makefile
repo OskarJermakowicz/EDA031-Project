@@ -32,7 +32,7 @@ server:
 	$(MAKE) -C $(SERVER_DIR) newsserver
 
 client:
-	$(MAKE) -C $(CLIENT_DIR) myclient
+	$(MAKE) -C $(CLIENT_DIR) newsclient
 
 clean:
 	$(MAKE) -C $(LIB_DIR) clean
