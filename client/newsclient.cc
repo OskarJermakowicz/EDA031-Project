@@ -19,8 +19,24 @@ bool is_number(const string& s) {
 }
 
 void send_command(const Connection& conn, const string& line) {
+
+    string INTEGER = "(0|[1-9][0-9]*)";
+    string TEXT = "(?:([^\\s\"]+)|\"([^\"]*)\")";
+    string WHITESPACE = "(?:\\s+)";
+
+    string HELP = "(help)";
+    string LIST = "(list)(?:" + WHITESPACE + INTEGER + ")?";
+    string CREATE = "(create)" + WHITESPACE + "(?:" + TEXT + "|" + INTEGER + WHITESPACE + TEXT + WHITESPACE + TEXT +
+                    WHITESPACE + TEXT + ")";
+    string DELETE = "(delete)" + WHITESPACE + INTEGER + "(?:" + WHITESPACE + INTEGER + ")?";
+    string GET = "(get)" + WHITESPACE + INTEGER + WHITESPACE + INTEGER;
+
+    string LINE =
+            "^" + WHITESPACE + "?(?:" + LIST + "|" + CREATE + "|" + DELETE + "|" + GET + "|" + HELP + ")" + WHITESPACE +
+            "?$";
+
 	cmatch m;
-	regex_match(line, m, regex("^(?:[:s:]+)?(?:(list)(?:(?:[:s:]+)(0|[1-9][0-9]*))?|(create)(?:[:s:]+)(?:(?:([^[:s:]"] + ) | "([^"] * )")|(0|[1-9][0-9]*)(?:[:s:]+)(?:([^[:s:]"] + ) | "([^"] * )")(?:[:s:]+)(?:([^[:s:]"] + ) | "([^"] * )")(?:[:s:]+)(?:([^[:s:]"] + ) | "([^"] * )"))|(delete)(?:[:s:]+)(0|[1-9][0-9]*)(?:(?:[:s:]+)(0|[1-9][0-9]*))?|(get)(?:[:s:]+)(0|[1-9][0-9]*)(?:[:s:]+)(0|[1-9][0-9]*)|(help))(?:[:s:]+)?$"));
+	regex_match(line, m, regex(LINE));
 
 	if (m.size() == 0) {
 		cout << "Unrecognized command, please try again." << endl;
@@ -85,7 +101,7 @@ int main(int argc, char* argv[]) {
 		cerr << "Usage: myclient host-name port-number" << endl;
 		exit(1);
 	}
-	
+
 	int port = -1;
 	try {
 		port = stoi(argv[2]);
@@ -93,7 +109,7 @@ int main(int argc, char* argv[]) {
 		cerr << "Wrong port number. " << e.what() << endl;
 		exit(1);
 	}
-	
+
 	Connection conn(argv[1], port);
 	if (!conn.isConnected()) {
 		cerr << "Connection attempt failed" << endl;
