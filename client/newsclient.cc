@@ -12,7 +12,6 @@ bool is_number(const string &s) {
     return !s.empty() && find_if(s.begin(), s.end(), [](char c) { return !isdigit(c); }) == s.end();
 }
 
-
 int main(int argc, char *argv[]) {
     if (argc != 3) {
         cerr << "Usage: myclient host-name port-number" << endl;
@@ -31,15 +30,12 @@ int main(int argc, char *argv[]) {
 }
 
 NewsClient::NewsClient(const char *addr, int port) {
-    shared_ptr <Connection> conn(new Connection(addr, port));
+    conn = shared_ptr<Connection>(new Connection(addr, port));
     if (!conn->isConnected()) {
         cerr << "Connection attempt failed" << endl;
         exit(1);
     }
     cout << "Connected to " << addr << ":" << port << endl;
-    regex grammar(LINE, std::regex::icase);
-
-
 }
 
 void NewsClient::run() {
@@ -58,47 +54,37 @@ void NewsClient::run() {
 
 
 void NewsClient::handle_command(string line) {
-
     smatch m;
-    regex_match(line, m, grammar);
-
+    regex_match(line, m, regex(LINE, regex::icase | regex::ECMAScript));
     if (m.size() == 0) {
         cout << "Unrecognized command, please try again." << endl;
         return;
     }
-
     string command = m[0];
     transform(command.begin(), command.end(), command.begin(), ::tolower);
-    cout << command << endl;
-
     if (command == "help") {
         cout << help_text << endl;
+        return;
     }
     else if (command == "list") {
         if (m.size() > 1) {
             send_int(conn, Protocol::COM_LIST_ART);
+        } else {
+            send_code(conn, Protocol::COM_LIST_NG);
         }
-        else {
-            send_int(conn, Protocol::COM_LIST_NG);
-        }
-    }
-    else if (command == "create") {
+    } else if (command == "create") {
         if (m.size() > 2) {
             send_int(conn, Protocol::COM_CREATE_ART);
-        }
-        else {
+        } else {
             send_int(conn, Protocol::COM_CREATE_NG);
         }
-    }
-    else if (command == "delete") {
+    } else if (command == "delete") {
         if (m.size() > 2) {
             send_int(conn, Protocol::COM_DELETE_ART);
-        }
-        else {
+        } else {
             send_int(conn, Protocol::COM_DELETE_NG);
         }
-    }
-    else if (command == "get") {
+    } else if (command == "get") {
         send_int(conn, Protocol::COM_GET_ART);
     }
 
@@ -110,9 +96,13 @@ void NewsClient::handle_command(string line) {
             send_string_parameter(conn, m[i]);
         }
     }
+    send_code(conn, Protocol::COM_END);
 }
 
-void NewsClient::list_ng(int ng) { }
+void NewsClient::list_ng() {
+    send_code(conn, Protocol::COM_LIST_NG);
+    send_code(conn, Protocol::COM_END);
+}
 
 void NewsClient::create_ng(std::string ng) { }
 

@@ -29,13 +29,12 @@ private:
             "^" + WHITESPACE + "?(?:" + LIST + "|" + CREATE + "|" + DELETE + "|" + GET + "|" + HELP + ")" + WHITESPACE +
             "?$";
 
-    std::regex grammar;
 
     std::shared_ptr <Connection> conn;
 
     void handle_command(std::string line);
 
-    void list_ng(int ng);
+    void list_ng();
 
     void create_ng(std::string ng);
 
