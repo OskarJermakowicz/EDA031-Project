@@ -3,6 +3,7 @@
 
 #include "../library/server.h"
 #include "inmem_storage.h"
+#include "disk_storage.h"
 #include "storage.h"
 
 class NewsServer : public Server {

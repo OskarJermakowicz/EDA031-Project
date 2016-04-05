@@ -19,7 +19,7 @@ LDFLAGS   = -g -L../library
 LDLIBS = -lclientserver
 
 # Targets
-PROGS = myclient
+PROGS = myclient newsclient
 
 all: $(PROGS)
 

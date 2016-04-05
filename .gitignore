@@ -67,3 +67,6 @@ newsserver
 *.aux
 *.log
 *.pdf
+
+# Database
+server/database
