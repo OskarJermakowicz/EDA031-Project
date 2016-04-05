@@ -12,7 +12,7 @@ public:
     void run();
 
 private:
-    const string help_text = "Available commands: (parameters within <> are optional and parameters within '' are mandatory)\nlist <number>\t\tLists newsgroups, or articles of newsgroup with id number\ncreate 'name'\t\tCreates a newsgroup with name\ncreate ''\ndelete\nget";
+    const string help_text = "Available newsgroup commands:\nlist\t\t\t\t\tLists newsgroups\ncreate <name>\t\t\t\tCreates a newsgroup\ndelete <ID>\t\t\t\tDeletes newsgroup with ID number <ID>\n\nAvailable article commands:\nlist <ID>\t\t\t\tLists articles in newsgroup with ID number <ID>\ncreate <ID> <title> <author> <body>\tCreates a new article in newsgroup with ID number <ID>\ndelete <ID1> <ID2>\t\t\tDeletes article with ID number <ID2> in newsgroup with ID number <ID1>\nget<ID1> <ID2>\t\t\t\tGets article with ID number <ID2> in newsgroup with ID number <ID1>";
     const std::string INTEGER = "(0|[1-9][0-9]*)";
     const std::string TEXT = "(?:([^\\s\"]+)|\"([^\"]*)\")";
     const std::string WHITESPACE = "(?:\\s+)";
