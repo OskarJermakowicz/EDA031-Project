@@ -3,17 +3,20 @@
 
 #include "../library/server.h"
 #include "inmem_storage.h"
+#include "storage.h"
 
 class NewsServer : public Server {
 
 public:
-    NewsServer(int port) : Server(port) { };
+    NewsServer(int port) : Server(port) {
+        db = std::unique_ptr<storage>(new inmem_storage());
+    };
 
     void run();
 
 private:
 
-    inmem_storage db;
+    std::unique_ptr <storage> db;
 
     void handle_request(const shared_ptr <Connection> &conn);
 

@@ -65,7 +65,7 @@ void NewsServer::run() {
 void NewsServer::list_ng(const shared_ptr <Connection> &conn) {
     consume_code(conn, Protocol::COM_END);
     send_code(conn, Protocol::ANS_LIST_NG);
-    vector <pair<int, string >> ngs = db.list_ng();
+    vector <pair<int, string >> ngs = db->list_ng();
     send_int_parameter(conn, ngs.size());
     for (pair<int, string> p: ngs) {
         send_int_parameter(conn, p.first);
@@ -79,7 +79,7 @@ void NewsServer::create_ng(const shared_ptr <Connection> &conn) {
     consume_code(conn, Protocol::COM_END);
     send_code(conn, Protocol::ANS_CREATE_NG);
     try {
-        db.create_ng(ng);
+        db->create_ng(ng);
         send_code(conn, Protocol::ANS_ACK);
     } catch (NGAlreadyExistsException &) {
         send_code(conn, Protocol::ANS_NAK);
@@ -93,7 +93,7 @@ void NewsServer::delete_ng(const shared_ptr <Connection> &conn) {
     consume_code(conn, Protocol::COM_END);
     send_code(conn, Protocol::ANS_DELETE_NG);
     try {
-        db.delete_ng(ng);
+        db->delete_ng(ng);
         send_code(conn, Protocol::ANS_ACK);
     } catch (NGDoesNotExistsException &) {
         send_code(conn, Protocol::ANS_NAK);
@@ -107,7 +107,7 @@ void NewsServer::list_art(const shared_ptr <Connection> &conn) {
     consume_code(conn, Protocol::COM_END);
     send_code(conn, Protocol::ANS_LIST_ART);
     try {
-        vector <pair<int, string >> arts = db.list_art(ng);
+        vector <pair<int, string >> arts = db->list_art(ng);
         send_code(conn, Protocol::ANS_ACK);
         send_int_parameter(conn, arts.size());
         for (pair<int, string> p: arts) {
@@ -130,7 +130,7 @@ void NewsServer::create_art(const shared_ptr <Connection> &conn) {
     consume_code(conn, Protocol::COM_END);
     send_code(conn, Protocol::ANS_CREATE_ART);
     try {
-        db.create_art(ng, title, author, text);
+        db->create_art(ng, title, author, text);
         send_code(conn, Protocol::ANS_ACK);
     } catch (NGDoesNotExistsException &) {
         send_code(conn, Protocol::ANS_NAK);
@@ -145,7 +145,7 @@ void NewsServer::delete_art(const shared_ptr <Connection> &conn) {
     consume_code(conn, Protocol::COM_END);
     send_code(conn, Protocol::ANS_DELETE_ART);
     try {
-        db.delete_art(ng, art);
+        db->delete_art(ng, art);
         send_code(conn, Protocol::ANS_ACK);
     } catch (NGDoesNotExistsException &) {
         send_code(conn, Protocol::ANS_NAK);
@@ -164,7 +164,7 @@ void NewsServer::get_art(const shared_ptr <Connection> &conn) {
 
     send_code(conn, Protocol::ANS_GET_ART);
     try {
-        article a = db.get_art(ng, art);
+        article a = db->get_art(ng, art);
         send_code(conn, Protocol::ANS_ACK);
         send_string_parameter(conn, a.title);
         send_string_parameter(conn, a.author);
