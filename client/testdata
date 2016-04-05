@@ -1,0 +1,19 @@
+list
+list 1
+create "Group 1"
+list 1
+create "Group 1"
+create 2 "Article 1" "Author 1" "Some text!"
+create 1 "Article 1" "Author 1" "Some text!"
+get 1 1
+get 2 1
+get 1 2
+get 2 2
+delete 2 2
+delete 1 2
+delete 2 1
+delete 1 1
+delete 2
+delete 1
+help
+invalid command
