@@ -14,7 +14,7 @@ void dumb_storage::create_ng(const string &ng) { }
 void dumb_storage::delete_ng(int ng) { }
 
 vector <pair<int, string>> dumb_storage::list_art(int ng) const {
-    throw NGDoesNotExistsException();
+    throw NGDoesNotExistException();
 }
 
 void dumb_storage::create_art(int ng, const string &title, const string &author, const string &text) { }
@@ -22,6 +22,6 @@ void dumb_storage::create_art(int ng, const string &title, const string &author,
 void dumb_storage::delete_art(int ng, int art) { }
 
 article dumb_storage::get_art(int ng, int art) const {
-    throw NGDoesNotExistsException();
+    throw NGDoesNotExistException();
 }
 

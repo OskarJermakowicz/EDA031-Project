@@ -83,7 +83,7 @@ void disk_storage::delete_ng(int ng) {
     string ngPath = get_newsgroup_directory(ng);
     DIR* newsgroupDirectory = opendir(ngPath.c_str());
     if (newsgroupDirectory == nullptr)
-        throw NGDoesNotExistsException();
+        throw NGDoesNotExistException();
 
     while (auto* file = readdir(newsgroupDirectory))
          remove((ngPath + file->d_name).c_str());
@@ -94,7 +94,7 @@ void disk_storage::delete_ng(int ng) {
 vector <pair<int, string>> disk_storage::list_art(int ng) const {
     DIR* newsgroupDirectory = opendir(get_newsgroup_directory(ng).c_str());
     if (newsgroupDirectory == nullptr)
-        throw NGDoesNotExistsException();
+        throw NGDoesNotExistException();
 
     vector <pair<int, string>> result;
     while (auto* file = readdir(newsgroupDirectory)) {
@@ -124,7 +124,7 @@ void disk_storage::create_art(int ng, const string &title, const string &author,
 
     ifstream ngifs(get_newsgroup_path(ng));
     if (!ngifs)
-        throw NGDoesNotExistsException();
+        throw NGDoesNotExistException();
     getline(ngifs, ngName);
     ngifs >> artId;
     ngifs.close();
@@ -142,23 +142,23 @@ void disk_storage::create_art(int ng, const string &title, const string &author,
 void disk_storage::delete_art(int ng, int art) {
     ifstream ngifs(get_newsgroup_path(ng));
     if (!ngifs)
-        throw NGDoesNotExistsException();
+        throw NGDoesNotExistException();
     ngifs.close();
 
     if (remove(get_article_path(ng, art).c_str()) != 0)
-        throw ARTDoesNotExistsException();
+        throw ARTDoesNotExistException();
 }
 
 article disk_storage::get_art(int ng, int art) const {
     // This is what we get to live with until 2017 (see ISO/IEC TS 18822:2015).
     ifstream ngifs(get_newsgroup_path(ng));
     if (!ngifs)
-        throw NGDoesNotExistsException();
+        throw NGDoesNotExistException();
     ngifs.close();
 
     ifstream ifs(get_article_path(ng, art));
     if (!ifs)
-        throw ARTDoesNotExistsException();
+        throw ARTDoesNotExistException();
     article article{"", "", ""};
     getline(ifs, article.title);
     getline(ifs, article.author);

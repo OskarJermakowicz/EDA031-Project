@@ -9,9 +9,7 @@
 class NewsServer : public Server {
 
 public:
-    NewsServer(int port) : Server(port) {
-        db = std::unique_ptr<storage>(new inmem_storage());
-    };
+    NewsServer(int port);
 
     void run();
 

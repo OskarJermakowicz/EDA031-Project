@@ -9,6 +9,10 @@
 
 using namespace std;
 
+NewsServer::NewsServer(int port) : Server(port) {
+    db = std::unique_ptr<storage>(new disk_storage());
+}
+
 void NewsServer::handle_request(const shared_ptr <Connection> &conn) {
     int command = recv_code(conn);
     try {
@@ -95,7 +99,7 @@ void NewsServer::delete_ng(const shared_ptr <Connection> &conn) {
     try {
         db->delete_ng(ng);
         send_code(conn, Protocol::ANS_ACK);
-    } catch (NGDoesNotExistsException &) {
+    } catch (NGDoesNotExistException &) {
         send_code(conn, Protocol::ANS_NAK);
         send_code(conn, Protocol::ERR_NG_DOES_NOT_EXIST);
     }
@@ -115,7 +119,7 @@ void NewsServer::list_art(const shared_ptr <Connection> &conn) {
             send_string_parameter(conn, p.second);
 
         }
-    } catch (NGDoesNotExistsException &) {
+    } catch (NGDoesNotExistException &) {
         send_code(conn, Protocol::ANS_NAK);
         send_code(conn, Protocol::ERR_NG_DOES_NOT_EXIST);
     }
@@ -132,7 +136,7 @@ void NewsServer::create_art(const shared_ptr <Connection> &conn) {
     try {
         db->create_art(ng, title, author, text);
         send_code(conn, Protocol::ANS_ACK);
-    } catch (NGDoesNotExistsException &) {
+    } catch (NGDoesNotExistException &) {
         send_code(conn, Protocol::ANS_NAK);
         send_code(conn, Protocol::ERR_NG_DOES_NOT_EXIST);
     }
@@ -147,10 +151,10 @@ void NewsServer::delete_art(const shared_ptr <Connection> &conn) {
     try {
         db->delete_art(ng, art);
         send_code(conn, Protocol::ANS_ACK);
-    } catch (NGDoesNotExistsException &) {
+    } catch (NGDoesNotExistException &) {
         send_code(conn, Protocol::ANS_NAK);
         send_code(conn, Protocol::ERR_NG_DOES_NOT_EXIST);
-    } catch (ARTDoesNotExistsException &) {
+    } catch (ARTDoesNotExistException &) {
         send_code(conn, Protocol::ANS_NAK);
         send_code(conn, Protocol::ERR_ART_DOES_NOT_EXIST);
     }
@@ -169,10 +173,10 @@ void NewsServer::get_art(const shared_ptr <Connection> &conn) {
         send_string_parameter(conn, a.title);
         send_string_parameter(conn, a.author);
         send_string_parameter(conn, a.text);
-    } catch (NGDoesNotExistsException &) {
+    } catch (NGDoesNotExistException &) {
         send_code(conn, Protocol::ANS_NAK);
         send_code(conn, Protocol::ERR_NG_DOES_NOT_EXIST);
-    } catch (ARTDoesNotExistsException &) {
+    } catch (ARTDoesNotExistException &) {
         send_code(conn, Protocol::ANS_NAK);
         send_code(conn, Protocol::ERR_ART_DOES_NOT_EXIST);
     }

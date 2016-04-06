@@ -3,8 +3,8 @@
 
 struct NGAlreadyExistsException {
 };
-struct NGDoesNotExistsException {
+struct NGDoesNotExistException {
 };
-struct ARTDoesNotExistsException {
+struct ARTDoesNotExistException {
 };
 #endif //EDA031_PROJECT_STORAGE_EXCEPTIONS_H

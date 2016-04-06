@@ -17,6 +17,8 @@ struct article {
 class storage {
 public:
 
+    virtual ~storage() = default;
+
     virtual vector <pair<int, string>> list_ng() const = 0;
 
     virtual void create_ng(const string &ng) = 0;

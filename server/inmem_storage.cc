@@ -18,7 +18,7 @@ void inmem_storage::delete_ng(int ng) {
 	map<int, Newsgroup>::iterator it = ng_map.find(ng);
 
 	if (it == ng_map.end()) {
-		throw NGDoesNotExistsException();
+		throw NGDoesNotExistException();
 	}
 	ng_names.erase(it->second.get_name());
 	ng_map.erase(it);
@@ -36,7 +36,7 @@ vector <pair<int, string>> inmem_storage::list_art(int ng) const {
 	map<int, Newsgroup>::const_iterator it = ng_map.find(ng);
 
 	if (it == ng_map.end()) {
-		throw NGDoesNotExistsException();
+		throw NGDoesNotExistException();
 	}
 	return it->second.list_art();
 }
@@ -45,7 +45,7 @@ void inmem_storage::create_art(int ng, const string &title, const string &author
 	map<int, Newsgroup>::iterator it = ng_map.find(ng);
 
 	if (it == ng_map.end()) {
-		throw NGDoesNotExistsException();
+		throw NGDoesNotExistException();
 	}
 	it->second.create_art(title, author, text);
 }
@@ -54,7 +54,7 @@ void inmem_storage::delete_art(int ng, int art) {
 	map<int, Newsgroup>::iterator it = ng_map.find(ng);
 
 	if (it == ng_map.end()) {
-		throw NGDoesNotExistsException();
+		throw NGDoesNotExistException();
 	}
 	it->second.delete_art(art);
 }
@@ -63,7 +63,7 @@ article inmem_storage::get_art(int ng, int art) const {
 	map<int, Newsgroup>::const_iterator it = ng_map.find(ng);
 
 	if (it == ng_map.end()) {
-	    throw NGDoesNotExistsException();
+	    throw NGDoesNotExistException();
 	} 
 	return it->second.get_art(art);
 }

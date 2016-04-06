@@ -18,7 +18,7 @@ void Newsgroup::create_art(const string &title, const string &author, const stri
 void Newsgroup::delete_art(const int &art) {
 	map<int, article>::iterator it = art_map.find(art);
 	if (it == art_map.end()) {
-		throw ARTDoesNotExistsException();
+		throw ARTDoesNotExistException();
 	}	
 	art_map.erase(it);
 }
@@ -26,7 +26,7 @@ void Newsgroup::delete_art(const int &art) {
 article Newsgroup::get_art(const int &art) const {
 	map<int, article>::const_iterator it = art_map.find(art);
 	if (it == art_map.end()) {
-		throw ARTDoesNotExistsException();
+		throw ARTDoesNotExistException();
 	} 
 	return  it->second;
 }
