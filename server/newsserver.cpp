@@ -1,5 +1,6 @@
 #include "newsserver.h"
 #include "storage_exceptions.h"
+#include "disk_storage.h"
 #include "../library/connectionclosedexception.h"
 #include "../library/message.h"
 #include "../library/protocol.h"
