@@ -8,15 +8,15 @@ using namespace std;
 class dumb_storage : public storage {
 public:
 
-    vector <pair<int, string>> list_ng() const;
+    std::vector <std::pair<int, std::string>> list_ng() const;
 
     void create_ng(const string &ng);
 
     void delete_ng(int ng);
 
-    vector <pair<int, string>> list_art(int ng) const;
+    std::vector <std::pair<int, std::string>> list_art(int ng) const;
 
-    void create_art(int ng, const string &title, const string &author, const string &text);
+    void create_art(int ng, const std::string &title, const std::string &author, const std::string &text);
 
     void delete_art(int ng, int art);
 

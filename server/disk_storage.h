@@ -37,7 +37,7 @@ public:
 
     std::vector <std::pair<int, std::string>> list_ng() const;
 
-    void create_ng(const string &ng);
+    void create_ng(const std::string &ng);
 
     void delete_ng(int ng);
 

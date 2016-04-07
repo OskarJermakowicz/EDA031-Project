@@ -4,6 +4,7 @@
 #include "../library/server.h"
 #include "storage.h"
 
+
 class NewsServer : public Server {
 
 public:
@@ -15,21 +16,21 @@ private:
 
     std::unique_ptr <storage> db;
 
-    void handle_request(const shared_ptr <Connection> &conn);
+    void handle_request(const std::shared_ptr <Connection> &conn);
 
-    void list_ng(const shared_ptr <Connection> &conn);
+    void list_ng(const std::shared_ptr <Connection> &conn);
 
-    void create_ng(const shared_ptr <Connection> &conn);
+    void create_ng(const std::shared_ptr <Connection> &conn);
 
-    void delete_ng(const shared_ptr <Connection> &conn);
+    void delete_ng(const std::shared_ptr <Connection> &conn);
 
-    void list_art(const shared_ptr <Connection> &conn);
+    void list_art(const std::shared_ptr <Connection> &conn);
 
-    void create_art(const shared_ptr <Connection> &conn);
+    void create_art(const std::shared_ptr <Connection> &conn);
 
-    void delete_art(const shared_ptr <Connection> &conn);
+    void delete_art(const std::shared_ptr <Connection> &conn);
 
-    void get_art(const shared_ptr <Connection> &conn);
+    void get_art(const std::shared_ptr <Connection> &conn);
 };
 
 
