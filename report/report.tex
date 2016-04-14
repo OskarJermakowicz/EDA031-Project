@@ -68,6 +68,12 @@ The client parses each user input through regex to see whether the input is a va
 
 
 \section{Conclusion}
+We fulfilled all requirements given to the extent that is possible. For example, the requirement that there should be no limitation on the number of newsgroups or articles is not realizeable. The newsserver is not particulary safe in the sense that anyone can connect to a server and modify the database. A better solution would involve users logging in and have restricted access to perhaps only read articles or only be able to delete articles created by the user.
+
+While the disk database does work as intended it does not handle all possible errors that can arise when working against disk (files can go missing, corrupted files, permissions, etc). We did not implement all this error checking as it felt out of scope for the project.
+
+The project as a whole felt small for the course.
+
 
 %% TODO %%
 \emph{Conclusions: requirements that you fulfill, problems that you haven’t succeeded in solving,
