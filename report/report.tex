@@ -35,7 +35,7 @@ The implementation is divided into three packages as can be seen in Figure~\ref{
     \label{fig:uml}
 \end{figure}
 
-The purpose of both the server and the client will be further explained in detail in section 1.1 and 1.2 of this report. The purpose of the library is to handle the interaction between the server and the client...
+The purpose of both the server and the client will be further explained in detail in section~\ref{subsec:server} and \ref{subsec:client} of this report. The purpose of the library is to handle the interaction between the server and the client...
 
 \begin{figure}[h]
     \centering
@@ -54,8 +54,12 @@ client and the server from the point that the server receives a command until it
 reply. UML sequence diagrams are good for this purpose.}
 
 \subsection{Server}
+\label{subsec:server}
+The provided classes \texttt{Connection} and \texttt{Server} manages the actual network sockets and connected clients. From them we receive a stream of bytes to decode as commands from the clients. The decoding and execution of commands is done by \texttt{Newsserver} using the utility functions in \texttt{message}. The commands may result in changes in the database which is used to store all newsgroups and articles. There is source code for two types of databases: one only using the primary memory (\texttt{inmem\_storage} and \texttt{newsgroup}) and one working against the disk (\texttt{disk\_storage}). Both of these classses inherit from the base class \texttt{storage} making it easy to swap between the two, although \texttt{disk\_storage} is the one currently used. There is also a set of possible exceptions defined in \texttt{storage\_exception} that can happen when interacting with the database.
+
 
 \subsection{Client}
+\label{subsec:client}
 In order to start a client, one has to run the following command on the command line in the directory of newsclient; \texttt{newsclient host-name port-number}. If the connection is successful, this will establish a connection with the server. The establishment of the connection is handled by the \texttt{NewsClient} constructor which creates a \texttt{Connection} object which will be used to communicate with the server.
 
 Once a connection is established the \texttt{run()} method of \texttt{NewsClient} is run, and the user can now execute commands. All possible commands are explained if the user runs the command \texttt{help}, the printout of the \texttt{help} command can be seen in Appendix A.
@@ -73,9 +77,12 @@ this. Any suggestions for improvements to the project are also welcome.}
 \section*{Appendix A}
 \addcontentsline{toc}{section}{Appendix A}
 
-\begin{center}
-\includegraphics[scale=0.8]{help_text_appendix.png}
-\textbf{Figure 3:} Available commands, shown when the \texttt{help} command is run.
-\end{center}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{help_text_appendix.png}
+    \caption{Available commands, shown when the \texttt{help} command is run.}
+    \label{fig:help}
+\end{figure}
 
 \end{document}
