@@ -14,9 +14,13 @@
 
 \date{\today}
 
+
 \begin{document}
 \maketitle
 
+\newpage
+\renewcommand{\contentsname}{Table of contents}
+\tableofcontents
 \newpage
 
 \section{System description}
@@ -50,7 +54,7 @@ reply. UML sequence diagrams are good for this purpose.
 \subsection{Client}
 In order to start a client, one has to run the following command on the command line in the directory of newsclient; \texttt{newsclient host-name port-number}. If the connection is successful, this will establish a connection with the server. The establishment of the connection is handled by the \texttt{NewsClient} constructor which creates a \texttt{Connection} object which will be used to communicate with the server.
 
-Once a connection is established the \texttt{run()} method of \texttt{NewsClient} is executed, and the user can now execute commands. All possible commands are explained if the user runs the command \texttt{help}.
+Once a connection is established the \texttt{run()} method of \texttt{NewsClient} is run, and the user can now execute commands. All possible commands are explained if the user runs the command \texttt{help}, the printout of the \texttt{help} command can be seen in Appendix A.
 
 The client parses each user input through regex to see whether the input is a valid command. This is done through \texttt{parse\_line(string)} which matches any valid commands and parameters and stores them in a vector. This vector is thereafter compared with the available commands in \texttt{handle\_command(string)}, and if it turns out the commands is valid, the corresponding method for that particular command is run in \texttt{NewsClient}. These methods simply call the different send commands in the \texttt{message} class in the \texttt{library} package. The start and end of the command is sent with the \texttt{send\_code(Connection, int)} method in \texttt{message}, where the int is the corresponding protocol definition from \texttt{protocol.h}. If the command has any parameters, these are sent with either \texttt{send\_int\_parameter(Connection, int)} or \texttt{send\_string\_parameter(Connection, string)}. Once the whole command has been sent to the server, the same method will check the servers response with \texttt{consume\_code(Connection, int)} (where int is a protocol definition) and \texttt{recv\_code(Connection)} in \texttt{message} and print the servers response to the user.
 
@@ -62,5 +66,12 @@ Conclusions: requirements that you fulfill, problems that you haven’t succeede
 etc. If you have found that the system ought to have more features you should elaborate on
 this. Any suggestions for improvements to the project are also welcome.
 
+\section*{Appendix A}
+\addcontentsline{toc}{section}{Appendix A}
+
+\begin{center}
+\includegraphics[scale=0.8]{help_text_appendix.png}
+\textbf{Figure 3:} Available commands, shown when the \texttt{help} command is run.
+\end{center}
 
 \end{document}
