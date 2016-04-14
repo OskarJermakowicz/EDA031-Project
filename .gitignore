@@ -68,6 +68,7 @@ newsclient
 *.aux
 *.log
 *.pdf
+*.toc
 
 # Database
 server/database
