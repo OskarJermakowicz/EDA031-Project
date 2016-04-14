@@ -6,8 +6,8 @@ CC  = g++
 
 # Define preprocessor, compiler, and linker flags. Uncomment the # lines
 # if you use clang++ and wish to use libc++ instead of libstd++.
-CPPFLAGS  = -std=c++11 -I../library
-CXXFLAGS  = -g -O2 -Wall -W -pedantic-errors
+CPPFLAGS  = -std=c++11 -I"../library"
+CXXFLAGS  = -g -O2 -Wall -pedantic-errors
 CXXFLAGS += -Wmissing-braces -Wparentheses -Wold-style-cast 
 CXXFLAGS += -std=c++11 
 LDFLAGS   = -g -L../library
@@ -19,22 +19,20 @@ LDFLAGS   = -g -L../library
 LDLIBS = -lclientserver
 
 # Targets
-PROGS = myclient newsclient
+PROGS = newsserver
 
 all: $(PROGS)
 
 # Targets rely on implicit rules for compiling and linking
 # The dependency on libclientserver.a is not defined.
-myclient: myclient.o
-
-newsclient: newsclient.o
+newsserver: newsserver.o inmem_storage.o newsgroup.o disk_storage.o
 
 # Phony targets
 .PHONY: all clean
 
 # Standard clean
 clean:
-	rm -f *.o $(PROGS)
+	rm -f *.o *.d $(PROGS)
 
 # Generate dependencies in *.d files
 %.d: %.cc
