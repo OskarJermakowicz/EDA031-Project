@@ -35,7 +35,7 @@ The implementation is divided into three packages as can be seen in Figure~\ref{
     \label{fig:uml}
 \end{figure}
 
-The purpose of both the server and the client will be further explained in detail in section~\ref{subsec:server} and \ref{subsec:client} of this report. The purpose of the library is to handle the interaction between the server and the client...
+The purpose of the library package is to simply handle the interaction between the server and the client. During the execution of commands on the server a given protocol is used for the communication which is defined in \texttt{protocol.h} in the library package. The purpose of both the server and the client will be further explained in detail in section~\ref{subsec:server} and \ref{subsec:client} of this report. Below in Figure~\ref{fig:sequence} an example sequence diagram can be seen, this shows the client and server interaction steps that are taken during the removal of a newsgroup when such a request comes from the client.
 
 \begin{figure}[!h]
     \centering
