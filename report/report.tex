@@ -35,14 +35,7 @@ The implementation is divided into three packages as can be seen in Figure~\ref{
     \label{fig:uml}
 \end{figure}
 
-The purpose of the library package is to simply handle the interaction between the server and the client. During the execution of commands on the server a given protocol is used for the communication which is defined in \texttt{protocol.h} in the library package. The purpose of both the server and the client will be further explained in detail in section~\ref{subsec:server} and \ref{subsec:client} of this report. Below in Figure~\ref{fig:sequence} an example sequence diagram can be seen, this shows the client and server interaction steps that are taken during the removal of a newsgroup when such a request comes from the client.
-
-\begin{figure}[!h]
-    \centering
-    \includegraphics[width=1.25\textwidth]{sequence_uml3.png}
-    \caption{The interaction between server and client.}
-    \label{fig:sequence}
-\end{figure}
+The purpose of the library package is to simply handle the interaction between the server and the client. During the execution of commands on the server a given protocol is used for the communication which is defined in \texttt{protocol.h} in the library package. The purpose of both the server and the client will be further explained in detail in section~\ref{subsec:server} and \ref{subsec:client} of this report. In Appendix A an example sequence diagram can be seen, this shows the client and server interaction steps that are taken during the removal of a newsgroup when such a request comes from the client.
 
 \subsection{Server}
 \label{subsec:server}
@@ -53,7 +46,7 @@ The provided classes \texttt{Connection} and \texttt{Server} manages the actual 
 \label{subsec:client}
 In order to start a client, one has to run the following command on the command line in the directory of newsclient; \texttt{newsclient host-name port-number}. If the connection is successful, this will establish a connection with the server. The establishment of the connection is handled by the \texttt{NewsClient} constructor which creates a \texttt{Connection} object which will be used to communicate with the server.
 
-Once a connection is established the \texttt{run()} method of \texttt{NewsClient} is run, and the user can now execute commands. All possible commands are explained if the user runs the command \texttt{help}, the printout of the \texttt{help} command can be seen in Appendix A.
+Once a connection is established the \texttt{run()} method of \texttt{NewsClient} is run, and the user can now execute commands. All possible commands are explained if the user runs the command \texttt{help}, the printout of the \texttt{help} command can be seen in Appendix B.
 
 The client parses each user input through regex to see whether the input is a valid command. This is done through \texttt{parse\_line(string)} which matches any valid commands and parameters and stores them in a vector. This vector is thereafter compared with the available commands in \texttt{handle\_command(string)}, and if it turns out the commands is valid, the corresponding method for that particular command is run in \texttt{NewsClient}. These methods simply call the different send commands in the \texttt{message} class in the \texttt{library} package. The start and end of the command is sent with the \texttt{send\_code(Connection, int)} method in \texttt{message}, where the int is the corresponding protocol definition from \texttt{protocol.h}. If the command has any parameters, these are sent with either \texttt{send\_int\_parameter(Connection, int)} or \texttt{send\_string\_parameter(Connection, string)}. Once the whole command has been sent to the server, the same method will check the servers response with \texttt{consume\_code(Connection, int)} (where int is a protocol definition) and \texttt{recv\_code(Connection)} in \texttt{message} and print the servers response to the user.
 
@@ -65,10 +58,21 @@ While the disk database does work as intended it does not handle all possible er
 
 The project as a whole felt small for the course, though, perhaps because we were a full team of four students. It would have been interesting to explore more obscure parts of C++ as there were plenty of time to complete the project.
 
-
-
+\newpage
 \section*{Appendix A}
 \addcontentsline{toc}{section}{Appendix A}
+
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=1.1\textwidth]{sequence_uml3.png}
+    \caption{The interaction between server and client.}
+    \label{fig:sequence}
+\end{figure}
+
+\newpage
+\section*{Appendix B}
+\addcontentsline{toc}{section}{Appendix B}
 
 
 \begin{figure}[h]
@@ -77,5 +81,7 @@ The project as a whole felt small for the course, though, perhaps because we wer
     \caption{Available commands, shown when the \texttt{help} command is run.}
     \label{fig:help}
 \end{figure}
+
+
 
 \end{document}
